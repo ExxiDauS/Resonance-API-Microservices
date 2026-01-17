@@ -4,6 +4,9 @@ import (
 	"context"
 	"log"
 	"math/rand"
+	"net/http"
+
+	"github.com/gin-gonic/gin"
 
 	spotifyauth "github.com/zmb3/spotify/v2/auth"
 
@@ -12,7 +15,25 @@ import (
 	"github.com/zmb3/spotify/v2"
 )
 
+type TrackResponse struct {
+	Title       string   `json:"title"`
+	Artist      string   `json:"artist"`
+	Image       string   `json:"image"`
+	Tags        []string `json:"tags"`
+	Description string   `json:"description"`
+}
+
 func main() {
+
+	r := gin.Default()
+	r.GET("/tracks/random", getRandomTracks)
+
+	log.Println("Server running on :8080")
+	r.Run(":8080")
+
+}
+
+func getRandomTracks(c *gin.Context) {
 	ctx := context.Background()
 	config := &clientcredentials.Config{
 		ClientID:     "1956424920024e97bd4c6847d5af05dc",
@@ -52,7 +73,22 @@ func main() {
 
 	log.Printf("Query: %s", query)
 
-	for _, item := range results.Tracks.Tracks {
-		log.Printf("Track: %s", item.SimpleTrack)
+	var tracks []TrackResponse
+
+	for _, t := range results.Tracks.Tracks {
+		image := ""
+		if len(t.Album.Images) > 0 {
+			image = t.Album.Images[0].URL
+		}
+
+		tracks = append(tracks, TrackResponse{
+			Title:       t.Name,
+			Artist:      t.Artists[0].Name,
+			Image:       image,
+			Tags:        []string{"Spotify", query},
+			Description: "Discovered via Spotify",
+		})
 	}
+
+	c.JSON(http.StatusOK, tracks)
 }
