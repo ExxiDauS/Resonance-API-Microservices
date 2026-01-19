@@ -2,21 +2,32 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"math/rand"
+	"time"
 
 	"github.com/zmb3/spotify/v2"
 
 	"music-service/internal/infrastructure/spotify_client"
 )
 
+// formatDuration converts a time.Duration to MM:SS format
+func formatDuration(d time.Duration) string {
+	totalSeconds := int(d.Seconds())
+	minutes := totalSeconds / 60
+	seconds := totalSeconds % 60
+	return fmt.Sprintf("%d:%02d", minutes, seconds)
+}
+
 // TODO: Search music, Get Random Songs, Get Top Songs, Get Recommendations
 type Tracks struct {
-	ID         spotify.ID `json:"id"`
-	Name       string     `json:"name"`
-	Artists    []string   `json:"artists"`
-	TrackImage string     `json:"track_image"`
-	Genres     []string   `json:"genres"`
+	ID       spotify.ID `json:"id"`
+	Name     string     `json:"name"`
+	Artists  []string   `json:"artists"`
+	ImageURL string     `json:"image_url"`
+	Genres   []string   `json:"genres"`
+	Duration string     `json:"duration"`
 }
 
 func GetRandomTracks(ctx context.Context) ([]Tracks, error) {
@@ -56,11 +67,12 @@ func GetRandomTracks(ctx context.Context) ([]Tracks, error) {
 		}
 
 		tracks = append(tracks, Tracks{
-			ID:         t.ID,
-			Name:       t.Name,
-			Artists:    artistNames,
-			TrackImage: t.Album.Images[0].URL,
-			Genres:     genres,
+			ID:       t.ID,
+			Name:     t.Name,
+			Artists:  artistNames,
+			ImageURL: t.Album.Images[0].URL,
+			Genres:   genres,
+			Duration: formatDuration(t.TimeDuration()),
 		})
 	}
 	return tracks, nil

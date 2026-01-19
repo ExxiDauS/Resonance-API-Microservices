@@ -16,6 +16,10 @@ type SpotifyConfig struct {
 	SpotifyClientSecret string
 }
 
+type PortConfig struct {
+	Port string
+}
+
 func LoadDatabaseConfig() (*DatabaseConfig, error) {
 	err := godotenv.Load()
 	if err != nil {
@@ -38,6 +42,19 @@ func LoadSpotifyConfig() (*SpotifyConfig, error) {
 	config := &SpotifyConfig{
 		SpotifyClientID:     os.Getenv("SPOTIFY_CLIENT_ID"),
 		SpotifyClientSecret: os.Getenv("SPOTIFY_CLIENT_SECRET"),
+	}
+
+	return config, nil
+}
+
+func LoadPortConfig() (*PortConfig, error) {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	config := &PortConfig{
+		Port: os.Getenv("PORT"),
 	}
 
 	return config, nil
