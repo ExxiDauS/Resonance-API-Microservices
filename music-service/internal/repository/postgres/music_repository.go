@@ -43,7 +43,6 @@ type Album struct {
 type Genre struct {
 	ID          uint      `gorm:"primaryKey"`
 	Name        string    `gorm:"uniqueIndex;not null"` // Electronic, Dream Pop, etc.
-	Slug        string    `gorm:"uniqueIndex;not null"` // electronic, dream-pop
 	Description string    `gorm:"type:text"`
 	ImageURL    string    // Genre artwork for UI
 	Tracks      []Track   `gorm:"many2many:track_genres;"`
