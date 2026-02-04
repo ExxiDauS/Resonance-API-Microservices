@@ -3,6 +3,7 @@ package main
 import (
 	"auth-service/internal/handler"
 	"auth-service/internal/infrastructure/database"
+	"auth-service/internal/middleware"
 	"auth-service/internal/repository/postgres"
 	"auth-service/internal/service"
 
@@ -16,7 +17,6 @@ func main() {
 		panic(err)
 	}
 
-	// migrate tables
 	db.AutoMigrate(
 		&postgres.User{},
 		&postgres.RefreshToken{},
@@ -30,5 +30,10 @@ func main() {
 	r.POST("/register", authHandler.Register)
 	r.POST("/login", authHandler.Login)
 
-	r.Run(":8080")
+	protected := r.Group("/")
+	protected.Use(middleware.JWTAuth())
+	{
+		protected.GET("/me", authHandler.Me)
+	}
+	r.Run(":9090")
 }

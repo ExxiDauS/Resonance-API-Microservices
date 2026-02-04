@@ -41,17 +41,22 @@ func (s *AuthService) Register(email, password, name string) error {
 	return s.db.Create(&u).Error
 }
 
-func (s *AuthService) Login(email, password string) (string, error) {
+func (s *AuthService) Login(email, password string) (*postgres.User, string, error) {
 
 	var u postgres.User
 	err := s.db.Where("email = ?", email).First(&u).Error
 	if err != nil {
-		return "", errors.New("invalid email/password")
+		return nil, "", errors.New("invalid email/password")
 	}
 
 	if !security.CheckPassword(u.PasswordHash, password) {
-		return "", errors.New("invalid email/password")
+		return nil, "", errors.New("invalid email/password")
 	}
 
-	return security.GenerateAccessToken(u.ID)
+	token, err := security.GenerateAccessToken(u.ID)
+	if err != nil {
+		return nil, "", err
+	}
+
+	return &u, token, nil
 }

@@ -22,4 +22,4 @@ type RefreshToken struct {
 	UserID    string `gorm:"index"`
 	TokenHash string
 	ExpiresAt time.Time `gorm:"index"`
-}
+} // ยังไม่ได้ใช้

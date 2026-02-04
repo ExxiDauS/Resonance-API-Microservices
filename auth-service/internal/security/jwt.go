@@ -1,12 +1,13 @@
 package security
 
 import (
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
-var secret = []byte("super-secret-key") // ย้ายไป env ทีหลังได้
+var secret = []byte(os.Getenv("JWT_SECRET"))
 
 func GenerateAccessToken(userID string) (string, error) {
 	claims := jwt.MapClaims{

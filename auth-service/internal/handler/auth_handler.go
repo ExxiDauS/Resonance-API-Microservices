@@ -50,7 +50,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	token, err := h.auth.Login(req.Email, req.Password)
+	user, token, err := h.auth.Login(req.Email, req.Password)
 	if err != nil {
 		c.JSON(401, gin.H{"error": err.Error()})
 		return
@@ -58,5 +58,19 @@ func (h *AuthHandler) Login(c *gin.Context) {
 
 	c.JSON(200, gin.H{
 		"access_token": token,
+		"user": gin.H{
+			"id":    user.ID,
+			"email": user.Email,
+			"name":  user.DisplayName,
+		},
+	})
+}
+
+func (h *AuthHandler) Me(c *gin.Context) {
+
+	userID, _ := c.Get("user_id")
+
+	c.JSON(200, gin.H{
+		"user_id": userID,
 	})
 }
