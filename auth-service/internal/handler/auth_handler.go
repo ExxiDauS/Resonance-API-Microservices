@@ -64,6 +64,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 			"name":  user.DisplayName,
 		},
 	})
+
 }
 
 func (h *AuthHandler) Me(c *gin.Context) {

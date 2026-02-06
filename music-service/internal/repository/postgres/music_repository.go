@@ -49,3 +49,9 @@ type Genre struct {
 	CreatedAt   time.Time `gorm:"autoCreateTime"`
 	UpdatedAt   time.Time `gorm:"autoUpdateTime"`
 }
+
+type UserGenreScore struct {
+	UserID string `gorm:"uniqueIndex:ug"`
+	Genre  string `gorm:"uniqueIndex:ug"`
+	Score  int
+}
