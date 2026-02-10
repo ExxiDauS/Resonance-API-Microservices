@@ -1,8 +1,24 @@
-package postgres
+package track
 
 import (
 	"time"
+
+	"github.com/zmb3/spotify/v2"
 )
+
+// --- API Response Structures (DTOs) ---
+
+// TrackResponse is the clean JSON we return to the frontend
+type TrackResponse struct {
+	ID       spotify.ID `json:"id"`
+	Name     string     `json:"name"`
+	Artists  []string   `json:"artists"`
+	ImageURL string     `json:"image_url"`
+	Genres   []string   `json:"genres"`
+	Duration string     `json:"duration"`
+}
+
+// --- Database Entities (GORM) ---
 
 type Track struct {
 	ID          string    `gorm:"primaryKey"`
@@ -15,7 +31,6 @@ type Track struct {
 	UpdatedAt   time.Time `gorm:"autoUpdateTime"`
 }
 
-// Artist stores artist information
 type Artist struct {
 	ID         string    `gorm:"primaryKey"`
 	Name       string    `gorm:"not null;index"`
@@ -25,33 +40,11 @@ type Artist struct {
 	UpdatedAt  time.Time `gorm:"autoUpdateTime"`
 }
 
-// Album stores album information
-type Album struct {
-	ID          string    `gorm:"primaryKey"`
-	Name        string    `gorm:"not null;index"`
-	AlbumType   string    `gorm:"type:varchar(20)"` // album, single, compilation
-	ImageURL    string    // 640x640 cover art
-	SpotifyURL  string    `gorm:"not null"`
-	ReleaseDate time.Time `gorm:"index"`
-	TotalTracks int
-	Tracks      []Track   `gorm:"foreignKey:AlbumID"`
-	CreatedAt   time.Time `gorm:"autoCreateTime"`
-	UpdatedAt   time.Time `gorm:"autoUpdateTime"`
-}
-
-// Genre stores music genres/tags (e.g., Electronic, Dream Pop, Indie)
 type Genre struct {
 	ID          uint      `gorm:"primaryKey"`
-	Name        string    `gorm:"uniqueIndex;not null"` // Electronic, Dream Pop, etc.
+	Name        string    `gorm:"uniqueIndex;not null"`
 	Description string    `gorm:"type:text"`
-	ImageURL    string    // Genre artwork for UI
 	Tracks      []Track   `gorm:"many2many:track_genres;"`
 	CreatedAt   time.Time `gorm:"autoCreateTime"`
 	UpdatedAt   time.Time `gorm:"autoUpdateTime"`
-}
-
-type UserGenreScore struct {
-	UserID string `gorm:"uniqueIndex:ug"`
-	Genre  string `gorm:"uniqueIndex:ug"`
-	Score  int
 }
