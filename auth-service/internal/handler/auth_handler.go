@@ -41,8 +41,8 @@ func (h *AuthHandler) Register(c *gin.Context) {
 func (h *AuthHandler) Login(c *gin.Context) {
 
 	var req struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
+		Identifier string `json:"identifier"`
+		Password   string `json:"password"`
 	}
 
 	if c.BindJSON(&req) != nil {
@@ -50,7 +50,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		return
 	}
 
-	user, token, err := h.auth.Login(req.Email, req.Password)
+	user, token, err := h.auth.Login(req.Identifier, req.Password)
 	if err != nil {
 		c.JSON(401, gin.H{"error": err.Error()})
 		return

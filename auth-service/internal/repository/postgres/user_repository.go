@@ -7,10 +7,14 @@ import (
 )
 
 type User struct {
-	ID           string `gorm:"primaryKey"`
-	Email        string `gorm:"uniqueIndex;not null"`
-	PasswordHash string `gorm:"not null"`
-	DisplayName  string `gorm:"index"`
+	ID                string `gorm:"primaryKey"`
+	Email             string `gorm:"uniqueIndex;not null"`
+	Username          string `gorm:"uniqueIndex;not null"`
+	PasswordHash      string `gorm:"not null"`
+	DisplayName       string
+	Bio               string
+	ProfilePictureURL string
+	SpotifyUserID     string
 
 	CreatedAt time.Time
 	UpdatedAt time.Time
